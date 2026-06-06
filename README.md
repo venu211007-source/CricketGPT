@@ -58,6 +58,17 @@ Next Steps:
 - Create features for prediction models
 - Train and evaluate machine learning models
 
+## File Descriptions
+
+eda.py
+Performs exploratory data analysis on the IPL dataset. Includes top run scorers, top wicket takers, toss impact analysis, and team win counts. Generates and saves bar charts as PNG files.
+
+model.py (in progress)
+Will contain the match winner prediction model. Uses match-level features like team names, venue, and toss decision to predict the winning team using machine learning.
+
+app.py (planned)
+Streamlit-based interactive dashboard to visualize player and team statistics and run live match predictions.
+
 ## Why this project?
 
 Most beginner ML projects focus on standard datasets such as sentiment analysis or spam detection. Through this project, I want to work with a larger real-world dataset and gain experience in data analysis, feature engineering, predictive modeling, and deployment.
