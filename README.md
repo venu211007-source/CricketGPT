@@ -74,3 +74,7 @@ Streamlit-based interactive dashboard to visualize player and team statistics an
 Most beginner ML projects focus on standard datasets such as sentiment analysis or spam detection. Through this project, I want to work with a larger real-world dataset and gain experience in data analysis, feature engineering, predictive modeling, and deployment.
 
 The long-term goal is to create a platform that can provide meaningful cricket insights and predictions using data-driven methods.
+
+## Result so far
+
+Pre-match prediction accuracy of ~49%, consistent with published research showing cricket match outcomes are highly stochastic. In-match prediction using live ball-by-ball features is planned as the next improvement
