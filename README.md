@@ -46,15 +46,15 @@ Some of the tools and libraries I plan to use are:
 
 ## Current Status
 
-The project is currently in its initial stage.
+The project is currently in its transitional and implementational stage.
 
 Completed:
 - Repository setup
 - Dataset collection
-
-Next Steps:
 - Explore and clean the data
 - Perform exploratory data analysis
+
+Next Steps:
 - Create features for prediction models
 - Train and evaluate machine learning models
 
@@ -63,11 +63,14 @@ Next Steps:
 eda.py
 Performs exploratory data analysis on the IPL dataset. Includes top run scorers, top wicket takers, toss impact analysis, and team win counts. Generates and saves bar charts as PNG files.
 
-model.py (in progress)
+model.py (completed after multiple testing)
 Will contain the match winner prediction model. Uses match-level features like team names, venue, and toss decision to predict the winning team using machine learning.
 
-app.py (planned)
+app.py (currently working on)
 Streamlit-based interactive dashboard to visualize player and team statistics and run live match predictions.
+
+## Note 
+The model.py is used only for testing purposes to find the accuracy and improve it while app.py is used for the frontend dashboard puirposes with no link between model.py
 
 ## Why this project?
 
