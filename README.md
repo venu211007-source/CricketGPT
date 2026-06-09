@@ -70,7 +70,7 @@ app.py (currently working on)
 Streamlit-based interactive dashboard to visualize player and team statistics and run live match predictions.
 
 ## Note 
-The model.py is used only for testing purposes to find the accuracy and improve it while app.py is used for the frontend dashboard puirposes with no link between model.py
+The model.py is used only for testing purposes to find the accuracy and improve it while app.py is used for the frontend dashboard(Streamlit) purposes with no link between model.py
 
 ## Why this project?
 
@@ -80,4 +80,4 @@ The long-term goal is to create a platform that can provide meaningful cricket i
 
 ## Result so far
 
-Pre-match prediction accuracy of ~49%, consistent with published research showing cricket match outcomes are highly stochastic. In-match prediction using live ball-by-ball features is planned as the next improvement
+Pre-match prediction accuracy of ~49%, consistent with published research showing cricket match outcomes are highly stochastic. In-match prediction using live ball-by-ball features is planned as the next improvement. Currently the dashboard is being test and devloped.
