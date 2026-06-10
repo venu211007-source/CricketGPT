@@ -13,11 +13,11 @@ Completed:
 
 In Progress:
 - Match winner prediction model
+- Interactive Streamlit dashboard
 
 Next Steps:
 - Win probability estimation
 - Tournament simulation
-- Interactive Streamlit dashboard
 
 ## What I plan to build
 
