@@ -53,3 +53,42 @@ elif page == "Team Stats":
     col1.metric("Total Matches", team_matches)
     col2.metric("Total Wins", team_wins)
     col3.metric("Win %", f"{win_pct}%")
+elif page == "Match Prediction":
+    st.header("Match Prediction")
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.preprocessing import LabelEncoder
+    import numpy as np
+
+    df = matches.dropna(subset=['winner'])
+    features = ['team1', 'team2', 'toss_winner', 'toss_decision', 'venue']
+    target = 'winner'
+    df = df[features + [target]].copy()
+
+    encoders = {}
+    for col in features + [target]:
+        le = LabelEncoder()
+        df[col] = le.fit_transform(df[col])
+        encoders[col] = le
+
+    X = df[features]
+    y = df[target]
+    model = RandomForestClassifier(n_estimators=100, random_state=42)
+    model.fit(X, y)
+
+    teams = sorted(matches['team1'].unique())
+    venues = sorted(matches['venue'].unique())
+
+    team1 = st.selectbox("Team 1", teams)
+    team2 = st.selectbox("Team 2", [t for t in teams if t != team1])
+    toss_winner = st.selectbox("Toss Winner", [team1, team2])
+    toss_decision = st.selectbox("Toss Decision", ["bat", "field"])
+    venue = st.selectbox("Venue", venues)
+
+    if st.button("Predict Winner"):
+        input_data = pd.DataFrame([[team1, team2, toss_winner, toss_decision, venue]], columns=features)
+        for col in features:
+            le = encoders[col]
+            input_data[col] = input_data[col].map(lambda x: le.transform([x])[0] if x in le.classes_ else -1)
+        prediction = model.predict(input_data)[0]
+        winner = encoders[target].inverse_transform([prediction])[0]
+        st.success(f"Predicted Winner: {winner}")
