@@ -10,13 +10,13 @@ Completed:
 - Repository setup
 - Dataset collection
 - Exploratory Data Analysis (EDA)
+- Win probability estimation
+- Match winner prediction model
 
 In Progress:
-- Match winner prediction model
 - Interactive Streamlit dashboard
 
 Next Steps:
-- Win probability estimation
 - Tournament simulation
 
 ## What I plan to build
