@@ -12,7 +12,7 @@ st.caption("Data source: Kaggle IPL Dataset (2008–2024). Stats may vary slight
 
 # Sidebar
 st.sidebar.header("Navigation")
-page = st.sidebar.selectbox("Choose a page", ["Overview", "Player Stats", "Team Stats", "Match Prediction", "Win Probability"])
+page = st.sidebar.selectbox("Choose a page", ["Overview", "Player Stats", "Team Stats", "Match Prediction", "Win Probability", "Tournament Simulation"])
 
 if page == "Overview":
     st.header("📊 IPL Overview")
@@ -100,7 +100,6 @@ elif page == "Win Probability":
     runs_scored = st.number_input("Runs Scored So Far", min_value=0, max_value=300, value=50)
     wickets_fallen = st.number_input("Wickets Fallen", min_value=0, max_value=10, value=2)
     
-    # --- FIX: Split Overs and Balls into side-by-side inputs ---
     st.markdown("**Overs Bowled**")
     col_ov1, col_ov2 = st.columns(2)
     with col_ov1:
@@ -157,3 +156,87 @@ elif page == "Win Probability":
         st.error("Defending team is likely to win")  
     else:
         st.error("Defending team is in a strong position!")
+
+elif page == "Tournament Simulation":
+    st.header("IPL Tournament Simulation")
+    st.markdown("Simulates a full IPL season using historical match data with realistic outcomes.")
+
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.preprocessing import LabelEncoder
+    import itertools
+    import random
+    import numpy as np
+
+    # Train prediction model
+    df_m = matches.dropna(subset=['winner'])
+    features = ['team1', 'team2', 'toss_winner', 'toss_decision', 'venue']
+    target = 'winner'
+    df_enc = df_m[features + [target]].copy()
+
+    encoders = {}
+    for col in features + [target]:
+        le = LabelEncoder()
+        df_enc[col] = le.fit_transform(df_enc[col])
+        encoders[col] = le
+
+    sim_model = RandomForestClassifier(n_estimators=100, random_state=42)
+    sim_model.fit(df_enc[features], df_enc[target])
+
+    # Current IPL teams
+    ipl_teams = [
+        "Mumbai Indians", "Chennai Super Kings", "Royal Challengers Bengaluru",
+        "Kolkata Knight Riders", "Delhi Capitals", "Rajasthan Royals",
+        "Punjab Kings", "Sunrisers Hyderabad", "Gujarat Titans", "Lucknow Super Giants"
+    ]
+
+    venues = list(matches['venue'].unique())
+
+    def predict_winner(t1, t2):
+        venue = random.choice(venues)
+        toss_w = random.choice([t1, t2])
+        toss_d = random.choice(["bat", "field"])
+        row = pd.DataFrame([[t1, t2, toss_w, toss_d, venue]], columns=features)
+        for col in features:
+            le = encoders[col]
+            row[col] = row[col].map(lambda x: le.transform([x])[0] if x in le.classes_ else 0)
+        pred = sim_model.predict(row)[0]
+        model_winner = encoders[target].inverse_transform([pred])[0]
+
+        # Add 35% upset probability to keep results realistic
+        if random.random() < 0.25:
+            return random.choice([t1, t2])
+        return model_winner if model_winner in [t1, t2] else random.choice([t1, t2])
+
+    if st.button("Run Tournament Simulation"):
+
+        # League stage — each team plays every other team once (9 matches per team)
+        points = {team: 0 for team in ipl_teams}
+        league_results = []
+
+        base_fixtures = list(itertools.combinations(ipl_teams, 2))
+        extra_fixtures = []
+        match_count = {team: 9 for team in ipl_teams}
+        random.shuffle(ipl_teams)
+        for team in ipl_teams:
+           while match_count[team] < 14:
+              opponent = random.choice([t for t in ipl_teams if t != team and match_count[t] < 14])
+              extra_fixtures.append((team, opponent))
+              match_count[team] += 1
+              match_count[opponent] += 1
+        fixtures = base_fixtures + extra_fixtures
+        for t1, t2 in fixtures:
+            winner = predict_winner(t1, t2)
+            loser = t2 if winner == t1 else t1
+            points[winner] += 2
+            league_results.append({"Team 1": t1, "Team 2": t2, "Winner": winner})
+
+        # Points table
+        points_df = pd.DataFrame(list(points.items()), columns=["Team", "Points"])
+        points_df = points_df.sort_values("Points", ascending=False).reset_index(drop=True)
+        points_df.index += 1
+
+        st.subheader("League Stage — Points Table")
+        st.dataframe(points_df)
+
+        top4 = points_df["Team"].head(4).tolist()
+        st.info(f"Top 4 qualified: {', '.join(top4)}")
