@@ -15,18 +15,8 @@ Completed:
 
 In Progress:
 - Interactive Streamlit dashboard
-
-Next Steps:
 - Tournament simulation
 
-## What I plan to build
-
-- Player performance analysis
-- Team performance analysis
-- Match winner prediction
-- Win probability estimation
-- Tournament simulation
-- Interactive dashboard for visualizing statistics
 
 ## Dataset
 
@@ -53,9 +43,9 @@ Completed:
 - Dataset collection
 - Explore and clean the data
 - Perform exploratory data analysis
+- Create features for prediction models
 
 Next Steps:
-- Create features for prediction models
 - Train and evaluate machine learning models
 
 ## File Descriptions
@@ -80,4 +70,4 @@ The long-term goal is to create a platform that can provide meaningful cricket i
 
 ## Result so far
 
-Pre-match prediction accuracy of ~49%, consistent with published research showing cricket match outcomes are highly stochastic. In-match prediction using live ball-by-ball features is planned as the next improvement. Currently the dashboard is being test and devloped.
+Pre-match prediction accuracy of ~49%, consistent with published research showing cricket match outcomes are highly stochastic. In-match prediction using live ball-by-ball features is planned as the next improvement. Currently the dashboard is being test and devloped.I have built the live win probability feature after testing its accuaracy and its performance over a period test cases.Now currently tournament simulations process is in progress.
