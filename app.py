@@ -183,11 +183,22 @@ elif page == "Tournament Simulation":
     sim_model.fit(df_enc[features], df_enc[target])
 
     # Current IPL teams
-    ipl_teams = [
-        "Mumbai Indians", "Chennai Super Kings", "Royal Challengers Bengaluru",
-        "Kolkata Knight Riders", "Delhi Capitals", "Rajasthan Royals",
-        "Punjab Kings", "Sunrisers Hyderabad", "Gujarat Titans", "Lucknow Super Giants"
-    ]
+    import json
+    import os
+
+    # Load custom teams if available, else use default IPL teams
+    if os.path.exists('custom_teams.json'):
+       with open('custom_teams.json', 'r') as f:
+        custom_teams = json.load(f)
+       ipl_teams = list(custom_teams.keys())
+       st.success("Using your custom teams!")
+    else:
+        ipl_teams = [
+            "Mumbai Indians", "Chennai Super Kings", "Royal Challengers Bengaluru",
+            "Kolkata Knight Riders", "Delhi Capitals", "Rajasthan Royals",
+            "Punjab Kings", "Sunrisers Hyderabad", "Gujarat Titans", "Lucknow Super Giants"
+        ]
+    st.info("Using default IPL teams. Build custom teams in Team Builder.")
 
     venues = list(matches['venue'].unique())
 
@@ -216,13 +227,18 @@ elif page == "Tournament Simulation":
         base_fixtures = list(itertools.combinations(ipl_teams, 2))
         extra_fixtures = []
         match_count = {team: 9 for team in ipl_teams}
-        random.shuffle(ipl_teams)
-        for team in ipl_teams:
-           while match_count[team] < 14:
-              opponent = random.choice([t for t in ipl_teams if t != team and match_count[t] < 14])
-              extra_fixtures.append((team, opponent))
-              match_count[team] += 1
-              match_count[opponent] += 1
+
+        attempts = 0
+        while min(match_count.values()) < 14 and attempts < 1000:
+            attempts += 1
+            available = [t for t in ipl_teams if match_count[t] < 14]
+            if len(available) < 2:
+                break
+            t1, t2 = random.sample(available, 2)
+            extra_fixtures.append((t1, t2))
+            match_count[t1] += 1
+            match_count[t2] += 1
+
         fixtures = base_fixtures + extra_fixtures
         for t1, t2 in fixtures:
             winner = predict_winner(t1, t2)
@@ -240,3 +256,23 @@ elif page == "Tournament Simulation":
 
         top4 = points_df["Team"].head(4).tolist()
         st.info(f"Top 4 qualified: {', '.join(top4)}")
+# Playoffs
+        st.subheader("Playoffs")
+
+        # Qualifier 1 — 1st vs 2nd (winner goes to final)
+        q1_winner = predict_winner(top4[0], top4[1])
+        q1_loser = top4[1] if q1_winner == top4[0] else top4[0]
+        st.write(f"**Qualifier 1:** {top4[0]} vs {top4[1]} → **{q1_winner}** advances to Final")
+
+        # Eliminator — 3rd vs 4th (loser eliminated)
+        elim_winner = predict_winner(top4[2], top4[3])
+        elim_loser = top4[3] if elim_winner == top4[2] else top4[2]
+        st.write(f"**Eliminator:** {top4[2]} vs {top4[3]} → **{elim_winner}** survives, {elim_loser} eliminated")
+
+        # Qualifier 2 — Q1 loser vs Eliminator winner (winner goes to final)
+        q2_winner = predict_winner(q1_loser, elim_winner)
+        q2_loser = elim_winner if q2_winner == q1_loser else q1_loser
+        st.write(f"**Qualifier 2:** {q1_loser} vs {elim_winner} → **{q2_winner}** advances to Final, {q2_loser} eliminated")
+
+        st.subheader("Final")
+        st.write(f"**{q1_winner}** vs **{q2_winner}**")        
