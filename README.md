@@ -12,10 +12,9 @@ Completed:
 - Exploratory Data Analysis (EDA)
 - Win probability estimation
 - Match winner prediction model
-
-In Progress:
 - Interactive Streamlit dashboard
 - Tournament simulation
+
 
 
 ## Dataset
@@ -70,4 +69,4 @@ The long-term goal is to create a platform that can provide meaningful cricket i
 
 ## Result so far
 
-Pre-match prediction accuracy of ~49%, consistent with published research showing cricket match outcomes are highly stochastic. In-match prediction using live ball-by-ball features is planned as the next improvement. Currently the dashboard is being test and devloped.I have built the live win probability feature after testing its accuaracy and its performance over a period test cases.Now currently tournament simulations process is in progress.
+Pre-match prediction accuracy of ~49%, consistent with published research showing cricket match outcomes are highly stochastic. In-match prediction using live ball-by-ball features is planned as the next improvement. Currently the dashboard is being test and devloped.I have built the live win probability feature after testing its accuaracy and its performance over a period test cases.Now currently tournament simulations process is completed.
