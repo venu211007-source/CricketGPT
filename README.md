@@ -43,9 +43,8 @@ Completed:
 - Explore and clean the data
 - Perform exploratory data analysis
 - Create features for prediction models
-
-Next Steps:
 - Train and evaluate machine learning models
+
 
 ## File Descriptions
 
