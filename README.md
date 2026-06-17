@@ -68,4 +68,4 @@ The long-term goal is to create a platform that can provide meaningful cricket i
 
 ## Result so far
 
-Pre-match prediction accuracy of ~49%, consistent with published research showing cricket match outcomes are highly stochastic. In-match prediction using live ball-by-ball features is planned as the next improvement. Currently the dashboard is being test and devloped.I have built the live win probability feature after testing its accuaracy and its performance over a period test cases.Now currently tournament simulations process is completed.
+Pre-match prediction accuracy of ~49%, consistent with published research showing cricket match outcomes are highly stochastic. In-match prediction using live ball-by-ball features is planned as the next improvement. Currently the dashboard is being test and devloped.I have built the live win probability feature after testing its accuaracy and its performance over a period test cases.Now currently tournament simulations process is completed.Live win probability is modified and is sucessfully tested and implemented.
