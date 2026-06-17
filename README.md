@@ -58,7 +58,7 @@ app.py (currently working on)
 Streamlit-based interactive dashboard to visualize player and team statistics and run live match predictions.
 
 ## Note 
-The model.py is used only for testing purposes to find the accuracy and improve it while app.py is used for the frontend dashboard(Streamlit) purposes with no link between model.py
+The model.py is used only for testing purposes to find the accuracy and improve it while app.py is used for the frontend dashboard(Streamlit) purposes with no link between model.py.The app.py contains a string of html code block for a better representation of data in the dashboard.
 
 ## Why this project?
 
