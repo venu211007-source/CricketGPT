@@ -136,23 +136,61 @@ elif page == "Win Probability":
     col3.metric("Required Run Rate", rrr)
     col4.metric("Current Run Rate", crr)
 
-    # Simple probability formula based on RRR vs CRR and wickets
+   # Probability calculation
     wickets_factor = (10 - wickets_fallen) / 10
     rr_factor = crr / rrr if rrr > 0 else 1
-    win_prob = round(min(max((rr_factor * wickets_factor) * 100, 0), 100), 1)
+    raw_chase = min(max((rr_factor * wickets_factor) * 100, 0), 100)
+
+    # Draw probability — higher when scores are close and match is near end
+    overs_bowled = overs_completed
+    closeness = max(0, 10 - abs(runs_required)) / 10  # higher when runs required is close to 0
+    end_factor = overs_bowled / 20  # higher as match progresses
+    draw_prob = round(min(closeness * end_factor * 15, 10), 1)  # max 10% draw chance
+
+    # Redistribute
+    chase_prob = round(max(raw_chase - draw_prob / 2, 0), 1)
+    defend_prob = round(max(100 - chase_prob - draw_prob, 0), 1)
 
     st.subheader("Win Probability")
-    st.progress(int(win_prob))
-    st.metric("Chasing Team Win Probability", f"{win_prob}%")
 
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Chasing Team", f"{chase_prob}%")
+    col2.metric("Tie", f"{draw_prob}%")
+    col3.metric("Defending Team", f"{defend_prob}%")
 
-    if win_prob >= 90:
+    # Three-colored bar
+    st.markdown(f"""
+    <div style="display:flex; height:20px; border-radius:10px; overflow:hidden; margin:10px 0;">
+        <div style="width:{chase_prob}%; background:#00c853;"></div>
+        <div style="width:{draw_prob}%; background:#ffa000;"></div>
+        <div style="width:{defend_prob}%; background:#d50000;"></div>
+    </div>
+    <div style="display:flex; justify-content:space-between; font-size:13px;">
+        <span style="color:#00c853;">Chasing {chase_prob}%</span>
+        <span style="color:#ffa000;">Tie {draw_prob}%</span>
+        <span style="color:#d50000;">Defending {defend_prob}%</span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Match conclusion
+    if runs_required <= 0 and runs_scored == target:
+        st.warning("Match Tied — Super Over!")
+    elif runs_required <= 0:
+        st.success("Chasing team has won the match!")
+    elif wickets_fallen >= 10 or overs_remaining <= 0:
+        if runs_scored > target:
+            st.success("Chasing team has won the match!")
+        elif runs_scored == target:
+            st.warning("Match Tied — Super Over!")
+        else:
+            st.error("Defending team has won the match!")
+    if chase_prob >= 90:
         st.success("Chasing team is likely to win")    
-    elif win_prob >= 60:
+    elif chase_prob >= 60:
         st.success("Chasing team is in a strong position!") 
-    elif win_prob >= 40:
+    elif chase_prob >= 40:
         st.warning("Match is evenly poised.")
-    elif win_prob <=20:
+    elif chase_prob <=20:
         st.error("Defending team is likely to win")  
     else:
         st.error("Defending team is in a strong position!")
@@ -188,17 +226,17 @@ elif page == "Tournament Simulation":
 
     # Load custom teams if available, else use default IPL teams
     if os.path.exists('custom_teams.json'):
-       with open('custom_teams.json', 'r') as f:
-        custom_teams = json.load(f)
-       ipl_teams = list(custom_teams.keys())
-       st.success("Using your custom teams!")
+        with open('custom_teams.json', 'r') as f:
+            custom_teams = json.load(f)
+        ipl_teams = list(custom_teams.keys())
+        st.success("Using your custom teams!")
     else:
         ipl_teams = [
             "Mumbai Indians", "Chennai Super Kings", "Royal Challengers Bengaluru",
             "Kolkata Knight Riders", "Delhi Capitals", "Rajasthan Royals",
             "Punjab Kings", "Sunrisers Hyderabad", "Gujarat Titans", "Lucknow Super Giants"
         ]
-    st.info("Using default IPL teams. Build custom teams in Team Builder.")
+        st.info("Using default IPL teams. Build custom teams in Team Builder.")
 
     venues = list(matches['venue'].unique())
 
@@ -256,7 +294,8 @@ elif page == "Tournament Simulation":
 
         top4 = points_df["Team"].head(4).tolist()
         st.info(f"Top 4 qualified: {', '.join(top4)}")
-# Playoffs
+
+        # Playoffs
         st.subheader("Playoffs")
 
         # Qualifier 1 — 1st vs 2nd (winner goes to final)
